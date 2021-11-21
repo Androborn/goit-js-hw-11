@@ -29,7 +29,7 @@ function getImages(e) {
     console.log(fatchedImages);
 
     if (fatchedImages.hits <= 0) {
-      Notiflix.Notify.failure(
+      return Notiflix.Notify.failure(
         'Sorry, there are no images matching your search query. Please try again.',
       );
     }
