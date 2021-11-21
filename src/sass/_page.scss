@@ -1,0 +1,46 @@
+.search-form-wrapper {
+  display: flex;
+
+  padding: 20px 0;
+  text-align: center;
+
+  background-color: #3f71b1;
+}
+
+.search-form {
+  display: flex;
+  margin: 0 auto;
+
+  overflow: hidden;
+
+  font-size: 20px;
+  border-radius: 5px;
+}
+
+input {
+  border: none;
+  padding: 10px;
+}
+
+.search-button {
+  border: none;
+}
+
+.gallery {
+  padding: 20px;
+
+  display: grid;
+  grid-gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.load-more {
+  padding: 10px;
+  margin-bottom: 20px;
+
+  border: none;
+  font-size: 20px;
+  border-radius: 5px;
+  background-color: #3f71b1;
+  color: #fff;
+}

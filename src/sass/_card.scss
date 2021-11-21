@@ -1,0 +1,35 @@
+.photo-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  border-radius: 5px;
+  border: 2px solid #adcce4;
+  overflow: hidden;
+  color: #727374;
+
+  transition: box-shadow cubic-bezier(0.4, 0, 0.2, 1) 500ms;
+
+  &:hover,
+  &:focus {
+    cursor: pointer;
+    box-shadow: 0px 0px 15px 15px #223c5033;
+
+    & .info {
+      color: #000000;
+      background-color: #fff;
+    }
+  }
+}
+
+.info {
+  display: flex;
+  justify-content: space-around;
+
+  transition: all cubic-bezier(0.4, 0, 0.2, 1) 500ms;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+}
