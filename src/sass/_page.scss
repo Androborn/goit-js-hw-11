@@ -1,5 +1,11 @@
-.search-form-wrapper {
+header {
   display: flex;
+  position: sticky;
+  top: 0;
+
+  justify-content: center;
+
+  width: 100%;
 
   padding: 20px 0;
   text-align: center;
@@ -9,20 +15,25 @@
 
 .search-form {
   display: flex;
-  margin: 0 auto;
 
   overflow: hidden;
 
   font-size: 20px;
   border-radius: 5px;
+
+  &:focus-within {
+    outline: 2px solid #adcce4;
+  }
 }
 
 input {
   border: none;
   padding: 10px;
+
+  outline: none;
 }
 
-.search-button {
+.search-btn {
   border: none;
 }
 
@@ -31,10 +42,14 @@ input {
 
   display: grid;
   grid-gap: 20px;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+
+  @media (min-width: 1440px) {
+    grid-template-columns: repeat(5, minmax(280px, 1fr));
+  }
 }
 
-.load-more {
+.load-more-btn {
   padding: 10px;
   margin-bottom: 20px;
 
@@ -43,4 +58,11 @@ input {
   border-radius: 5px;
   background-color: #3f71b1;
   color: #fff;
+
+  transition: transform cubic-bezier(0.4, 0, 0.2, 1) 500ms;
+
+  &:hover,
+  :focus {
+    transform: scale(1.1);
+  }
 }

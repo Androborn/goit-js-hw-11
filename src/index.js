@@ -1,13 +1,23 @@
 import './sass/main.scss';
 import { fetchImages } from './js/fetchImages.js';
 import Notiflix from 'notiflix';
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
+// import InfiniteScroll from 'infinitescroll';
 
-const axios = require('axios');
+let fullSizeGallery = new SimpleLightbox('.gallery a');
+
+// new InfiniteScroll('.gallery', {
+//   path: fetchImages(searchQuery, page),
+//   append: '.photo-card',
+//   status: '.page-load-status',
+// });
 
 const refs = {
   searchForm: document.querySelector('#search-form'),
   gallery: document.querySelector('div.gallery'),
-  moreButton: document.querySelector('button.load-more'),
+  moreButton: document.querySelector('button.load-more-btn'),
+  searchButton: document.querySelector('button.search-btn'),
 };
 
 let page = 1;
@@ -36,6 +46,7 @@ function getImages(e) {
 
     page += 1;
     refs.moreButton.hidden = false;
+    refs.searchButton.blur();
 
     Notiflix.Notify.success(
       `Hooray! We found ${fatchedImages.totalHits} images.`,
@@ -65,35 +76,54 @@ function getMoreImages() {
 }
 
 function addCardsMarkup(fatchedImages) {
+  refs.searchForm.style.marginLeft = '17px';
+
   refs.gallery.innerHTML = fatchedImages.hits
     .map(image => {
-      return `<div class="photo-card">
-    <img src="${image.webformatURL}" alt="${image.tags}" loading="lazy" />
-    <div class="info">
-      <p class="info-item"><b>Likes</b> ${image.likes}</p>
-      <p class="info-item"><b>Views</b> ${image.views}</p>
-      <p class="info-item"><b>Comments</b> ${image.comments}</p>
-      <p class="info-item"><b>Downloads</b> ${image.downloads}</p>
+      return `<a href="${image.largeImageURL}">
+    <div class="photo-card">
+      <img src="${image.webformatURL}" alt="${image.tags}" loading="lazy" />
+      <div class="info">
+        <p class="info-item"><b>Likes</b> ${image.likes}</p>
+        <p class="info-item"><b>Views</b> ${image.views}</p>
+        <p class="info-item"><b>Comments</b> ${image.comments}</p>
+        <p class="info-item"><b>Downloads</b> ${image.downloads}</p>
+      </div>
     </div>
-  </div>`;
+  </a>`;
     })
     .join('');
+
+  fullSizeGallery.refresh();
 }
 
 function addMoreCardsMarkup(fatchedImages) {
   const markup = fatchedImages.hits
     .map(image => {
-      return `<div class="photo-card">
-    <img src="${image.webformatURL}" alt="${image.tags}" loading="lazy" />
-    <div class="info">
-      <p class="info-item"><b>Likes</b> ${image.likes}</p>
-      <p class="info-item"><b>Views</b> ${image.views}</p>
-      <p class="info-item"><b>Comments</b> ${image.comments}</p>
-      <p class="info-item"><b>Downloads</b> ${image.downloads}</p>
+      return `<a href="${image.largeImageURL}">
+    <div class="photo-card">
+      <img src="${image.webformatURL}" alt="${image.tags}" loading="lazy" />
+      <div class="info">
+        <p class="info-item"><b>Likes</b> ${image.likes}</p>
+        <p class="info-item"><b>Views</b> ${image.views}</p>
+        <p class="info-item"><b>Comments</b> ${image.comments}</p>
+        <p class="info-item"><b>Downloads</b> ${image.downloads}</p>
+      </div>
     </div>
-  </div>`;
+  </a>`;
     })
     .join('');
 
   refs.gallery.insertAdjacentHTML('beforeend', markup);
+
+  fullSizeGallery.refresh();
+
+  const { height: cardHeight } = document
+    .querySelector('.gallery')
+    .firstElementChild.getBoundingClientRect();
+
+  window.scrollBy({
+    top: cardHeight * 2,
+    behavior: 'smooth',
+  });
 }

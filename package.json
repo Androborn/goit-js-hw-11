@@ -20,12 +20,16 @@
   },
   "devDependencies": {
     "axios": "^0.24.0",
+    "infinite-scroll": "^4.0.1",
     "notiflix": "^3.2.2",
     "parcel-bundler": "^1.12.5",
     "parcel-plugin-handlebars-precompile": "^1.0.2",
     "parcel-plugin-nuke-dist": "^1.0.1",
     "posthtml-include": "^1.7.2",
-    "sass": "^1.43.4"
+    "sass": "^1.43.4",
+    "simplelightbox": "^2.10.1"
   },
-  "dependencies": {}
+  "dependencies": {
+    "infinitescroll": "^0.1.9"
+  }
 }

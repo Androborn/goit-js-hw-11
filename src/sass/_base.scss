@@ -8,6 +8,10 @@ body {
   background: linear-gradient(to right, #c0e2f0, #ebfdfb, #c0e2f0);
 }
 
-.link {
+a {
   text-decoration: none;
+}
+
+button {
+  cursor: pointer;
 }
