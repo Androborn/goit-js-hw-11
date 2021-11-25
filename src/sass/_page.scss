@@ -1,14 +1,10 @@
-header {
+.serch-form-wrapper {
   display: flex;
+  justify-content: center;
   position: sticky;
   top: 0;
-
-  justify-content: center;
-
   width: 100%;
-
   padding: 20px 0;
-  text-align: center;
 
   background-color: #3f71b1;
 }
@@ -16,20 +12,19 @@ header {
 .search-form {
   display: flex;
 
-  overflow: hidden;
-
   font-size: 20px;
   border-radius: 5px;
+  overflow: hidden;
 
   &:focus-within {
     outline: 2px solid #adcce4;
   }
 }
 
-input {
-  border: none;
+input[name='searchQuery'] {
   padding: 10px;
 
+  border: none;
   outline: none;
 }
 
@@ -38,11 +33,10 @@ input {
 }
 
 .gallery {
-  padding: 20px;
-
   display: grid;
-  grid-gap: 20px;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-gap: 20px;
+  padding: 20px;
 
   @media (min-width: 1440px) {
     grid-template-columns: repeat(5, minmax(280px, 1fr));
@@ -53,11 +47,11 @@ input {
   padding: 10px;
   margin-bottom: 20px;
 
-  border: none;
   font-size: 20px;
   border-radius: 5px;
   background-color: #3f71b1;
   color: #fff;
+  border: none;
 
   transition: transform cubic-bezier(0.4, 0, 0.2, 1) 500ms;
 

@@ -3,15 +3,6 @@ import { fetchImages } from './js/fetchImages.js';
 import Notiflix from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
-// import InfiniteScroll from 'infinitescroll';
-
-let fullSizeGallery = new SimpleLightbox('.gallery a');
-
-// new InfiniteScroll('.gallery', {
-//   path: fetchImages(searchQuery, page),
-//   append: '.photo-card',
-//   status: '.page-load-status',
-// });
 
 const refs = {
   searchForm: document.querySelector('#search-form'),
@@ -19,6 +10,8 @@ const refs = {
   moreButton: document.querySelector('button.load-more-btn'),
   searchButton: document.querySelector('button.search-btn'),
 };
+
+let fullSizeGallery = new SimpleLightbox('.gallery a');
 
 let page = 1;
 let searchQuery = '';
@@ -36,8 +29,6 @@ function getImages(e) {
   searchQuery = refs.searchForm.searchQuery.value;
 
   fetchImages(searchQuery, page).then(fatchedImages => {
-    console.log(fatchedImages);
-
     if (fatchedImages.hits <= 0) {
       return Notiflix.Notify.failure(
         'Sorry, there are no images matching your search query. Please try again.',
@@ -95,6 +86,15 @@ function addCardsMarkup(fatchedImages) {
     .join('');
 
   fullSizeGallery.refresh();
+
+  fullSizeGallery.on(
+    'shown.simplelightbox',
+    () => (refs.gallery.style.overflow = 'hidden'),
+  );
+  fullSizeGallery.on(
+    'close.simplelightbox',
+    () => (refs.gallery.style.overflow = 'auto'),
+  );
 }
 
 function addMoreCardsMarkup(fatchedImages) {
@@ -117,6 +117,15 @@ function addMoreCardsMarkup(fatchedImages) {
   refs.gallery.insertAdjacentHTML('beforeend', markup);
 
   fullSizeGallery.refresh();
+
+  fullSizeGallery.on(
+    'shown.simplelightbox',
+    () => (refs.gallery.style.overflow = 'hidden'),
+  );
+  fullSizeGallery.on(
+    'close.simplelightbox',
+    () => (refs.gallery.style.overflow = 'auto'),
+  );
 
   const { height: cardHeight } = document
     .querySelector('.gallery')

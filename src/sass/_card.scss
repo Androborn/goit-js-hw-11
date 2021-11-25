@@ -1,12 +1,29 @@
-.photo-card {
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+a:hover,
+a:focus {
+  & .info {
+    color: #000000;
+    background-color: #fff;
 
+    font-size: 1.1em;
+    padding: 0.78em 0;
+  }
+}
+
+.photo-card {
+  // Dynamic equal sized small squares grid in fixed size big square
+  // https://pretagteam.com/question/create-dynamic-equal-sized-small-squares-grid-in-fixed-size-big-square
+  display: grid;
+
+  &::before {
+    content: '';
+    padding-bottom: 80%;
+    grid-area: 1 / 1 / 2 / 2;
+  }
+
+  color: #727374;
   border-radius: 5px;
   border: 2px solid #adcce4;
   overflow: hidden;
-  color: #727374;
 
   transition: box-shadow cubic-bezier(0.4, 0, 0.2, 1) 500ms;
 
@@ -14,17 +31,21 @@
   &:focus {
     cursor: pointer;
     box-shadow: 0px 0px 15px 15px #223c5033;
-
-    & .info {
-      color: #000000;
-      background-color: #fff;
-    }
   }
+}
+
+img {
+  object-fit: cover;
+  width: 100%;
+  height: 100%;
+
+  grid-area: 1 / 1 / 2 / 2;
 }
 
 .info {
   display: flex;
   justify-content: space-around;
+  padding: 1em 0;
 
   transition: all cubic-bezier(0.4, 0, 0.2, 1) 500ms;
 }
