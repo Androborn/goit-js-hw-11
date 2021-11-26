@@ -1,14 +1,10 @@
-const API_KEY = '24437506-2bd4a91f2d86307f94e472b85';
-const URL = `https://pixabay.com/api/`;
-// get parameters out of this module = make an object to stringify URLSearchParams
-const IMG_TYPE = 'photo';
-const ORIENTATION = 'horizontal';
-const AGE_FILTER = 'true';
-const IMG_PER_PAGE = 40;
-
 const axios = require('axios');
 
-export async function fetchImages(userQuery, page) {
+export async function fetchImages(
+  userQuery,
+  page,
+  { API_KEY, IMG_TYPE, ORIENTATION, AGE_FILTER, IMG_PER_PAGE },
+) {
   try {
     axios.defaults.baseURL = 'https://pixabay.com/api';
     const response = await axios.get(

@@ -10,94 +10,128 @@ const refs = {
   moreButton: document.querySelector('button.load-more-btn'),
   searchButton: document.querySelector('button.search-btn'),
 };
-
+const { searchForm, gallery, moreButton, searchButton } = refs;
+const urlSearchParams = {
+  API_KEY: '24437506-2bd4a91f2d86307f94e472b85',
+  IMG_TYPE: 'photo',
+  ORIENTATION: 'horizontal',
+  AGE_FILTER: 'true',
+  IMG_PER_PAGE: 40,
+};
+const { API_KEY, IMG_TYPE, ORIENTATION, AGE_FILTER, IMG_PER_PAGE } =
+  urlSearchParams;
+let page = 0;
+let searchQuery = '';
 let fullSizeGallery = new SimpleLightbox('.gallery a');
 
-let page = 1;
-let searchQuery = '';
-// remove after refactoring HTTP module URLSearchParams
-const IMG_PER_PAGE = 40;
+searchForm.addEventListener('submit', getImages);
+moreButton.addEventListener('click', getMoreImages);
 
-refs.searchForm.addEventListener('submit', getImages);
-refs.moreButton.addEventListener('click', getMoreImages);
+moreButton.hidden = true;
 
-refs.moreButton.hidden = true;
+fullSizeGallery.on(
+  'shown.simplelightbox',
+  () => (gallery.style.overflow = 'hidden'),
+);
+fullSizeGallery.on(
+  'close.simplelightbox',
+  () => (gallery.style.overflow = 'auto'),
+);
 
-function getImages(e) {
+async function getImages(e) {
   e.preventDefault();
 
-  searchQuery = refs.searchForm.searchQuery.value;
+  page += 1;
+  searchButton.blur();
+  recordUserQuery();
 
-  fetchImages(searchQuery, page).then(fatchedImages => {
-    if (fatchedImages.hits <= 0) {
-      return Notiflix.Notify.failure(
-        'Sorry, there are no images matching your search query. Please try again.',
-      );
-    }
+  if (gallery.children !== 0) {
+    scrollToPageStart();
+    gallery.innerHTML = '';
+  }
 
-    page += 1;
-    refs.moreButton.hidden = false;
-    refs.searchButton.blur();
-
-    Notiflix.Notify.success(
-      `Hooray! We found ${fatchedImages.totalHits} images.`,
-    );
-
-    return addCardsMarkup(fatchedImages);
-  });
+  await processFetchedData();
 }
 
-function getMoreImages() {
-  fetchImages(searchQuery, page)
-    .then(fatchedImages => {
-      page += 1;
+async function getMoreImages() {
+  page += 1;
 
-      if (page > parseInt(fatchedImages.totalHits / IMG_PER_PAGE) + 1) {
-        return Notiflix.Notify.info(
-          "We're sorry, but you've reached the end of search results.",
-          (refs.moreButton.hidden = true),
-        );
+  await processFetchedData();
+
+  scrollToNewCards();
+}
+
+function processFetchedData() {
+  return fetchImages(searchQuery, page, urlSearchParams)
+    .then(fatchedImages => {
+      toggleMoreBtnVisibility(fatchedImages);
+
+      if (fatchedImages.hits <= 0) {
+        return notifySearchUnSuccess();
       }
 
-      return addMoreCardsMarkup(fatchedImages);
+      if (gallery.children !== 0) {
+        notifySearchSuccess(fatchedImages);
+      }
+
+      if (page > Math.ceil(fatchedImages.totalHits / IMG_PER_PAGE)) {
+        notifySearchEnd();
+      }
+
+      return addCardsMarkup(fatchedImages);
     })
     .catch(error => {
       console.log(error);
     });
 }
 
-function addCardsMarkup(fatchedImages) {
-  refs.searchForm.style.marginLeft = '17px';
+function recordUserQuery() {
+  searchQuery = searchForm.searchQuery.value;
+}
 
-  refs.gallery.innerHTML = fatchedImages.hits
-    .map(image => {
-      return `<a href="${image.largeImageURL}">
-    <div class="photo-card">
-      <img src="${image.webformatURL}" alt="${image.tags}" loading="lazy" />
-      <div class="info">
-        <p class="info-item"><b>Likes</b> ${image.likes}</p>
-        <p class="info-item"><b>Views</b> ${image.views}</p>
-        <p class="info-item"><b>Comments</b> ${image.comments}</p>
-        <p class="info-item"><b>Downloads</b> ${image.downloads}</p>
-      </div>
-    </div>
-  </a>`;
-    })
-    .join('');
-
-  fullSizeGallery.refresh();
-
-  fullSizeGallery.on(
-    'shown.simplelightbox',
-    () => (refs.gallery.style.overflow = 'hidden'),
-  );
-  fullSizeGallery.on(
-    'close.simplelightbox',
-    () => (refs.gallery.style.overflow = 'auto'),
+function notifySearchUnSuccess() {
+  Notiflix.Notify.failure(
+    'Sorry, there are no images matching your search query. Please try again.',
   );
 }
 
-function addMoreCardsMarkup(fatchedImages) {
+function notifySearchSuccess(fatchedImages) {
+  Notiflix.Notify.success(
+    `Hooray! We found ${fatchedImages.totalHits} images.`,
+  );
+}
+
+function notifySearchEnd() {
+  Notiflix.Notify.info(
+    "We're sorry, but you've reached the end of search results.",
+  );
+}
+
+function toggleMoreBtnVisibility(fatchedImages) {
+  if (moreButton.hidden === true && fatchedImages.hits <= 0) {
+    return (moreButton.hidden = true);
+  }
+
+  moreButton.hidden = false;
+}
+
+function scrollToPageStart() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function scrollToNewCards() {
+  const { height: cardHeight } = document
+    .querySelector('.gallery')
+    .firstElementChild.getBoundingClientRect();
+
+  window.scrollBy({
+    top: cardHeight * 2,
+    behavior: 'smooth',
+  });
+}
+
+function addCardsMarkup(fatchedImages) {
+  searchForm.style.marginLeft = '17px';
   const markup = fatchedImages.hits
     .map(image => {
       return `<a href="${image.largeImageURL}">
@@ -114,25 +148,10 @@ function addMoreCardsMarkup(fatchedImages) {
     })
     .join('');
 
-  refs.gallery.insertAdjacentHTML('beforeend', markup);
+  if (gallery.children === 0) {
+    return (gallery.innerHTML = markup);
+  }
+  gallery.insertAdjacentHTML('beforeend', markup);
 
   fullSizeGallery.refresh();
-
-  fullSizeGallery.on(
-    'shown.simplelightbox',
-    () => (refs.gallery.style.overflow = 'hidden'),
-  );
-  fullSizeGallery.on(
-    'close.simplelightbox',
-    () => (refs.gallery.style.overflow = 'auto'),
-  );
-
-  const { height: cardHeight } = document
-    .querySelector('.gallery')
-    .firstElementChild.getBoundingClientRect();
-
-  window.scrollBy({
-    top: cardHeight * 2,
-    behavior: 'smooth',
-  });
 }

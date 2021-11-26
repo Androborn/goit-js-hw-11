@@ -14,9 +14,11 @@ a:focus {
   // https://pretagteam.com/question/create-dynamic-equal-sized-small-squares-grid-in-fixed-size-big-square
   display: grid;
 
+  position: relative;
+
   &::before {
     content: '';
-    padding-bottom: 80%;
+    padding-bottom: 100%;
     grid-area: 1 / 1 / 2 / 2;
   }
 
@@ -43,6 +45,10 @@ img {
 }
 
 .info {
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+
   display: flex;
   justify-content: space-around;
   padding: 1em 0;
