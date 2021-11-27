@@ -1,11 +1,10 @@
 a:hover,
 a:focus {
   & .info {
-    color: #000000;
     background-color: #fff;
 
     font-size: 1.1em;
-    padding: 0.78em 0;
+    padding: 0.8em 0;
   }
 }
 
@@ -48,10 +47,12 @@ img {
   position: absolute;
   width: 100%;
   bottom: 0;
-
   display: flex;
   justify-content: space-around;
   padding: 1em 0;
+
+  color: #000000;
+  background-color: rgba(255, 255, 255, 0.5);
 
   transition: all cubic-bezier(0.4, 0, 0.2, 1) 500ms;
 }

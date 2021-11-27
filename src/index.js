@@ -132,6 +132,7 @@ function scrollToNewCards() {
 
 function addCardsMarkup(fatchedImages) {
   searchForm.style.marginLeft = '17px';
+
   const markup = fatchedImages.hits
     .map(image => {
       return `<a href="${image.largeImageURL}">
