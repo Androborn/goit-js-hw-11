@@ -28,12 +28,12 @@ export default class SearchBtn {
 
   enableBtn() {
     this.refs.btn.disabled = false;
+    this.refs.btn.style.pointerEvents = 'auto';
   }
   disableBtn() {
     this.refs.btn.disabled = true;
     this.refs.btn.blur();
     this.refs.btn.style.pointerEvents = 'none';
-    // add event poiter none to search
   }
 
   enableLoadState() {

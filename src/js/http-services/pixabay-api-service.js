@@ -4,9 +4,9 @@ const API_KEY = '24437506-2bd4a91f2d86307f94e472b85';
 const IMG_TYPE = 'photo';
 const ORIENTATION = 'horizontal';
 const AGE_FILTER = 'true';
-const IMG_PER_PAGE = 40;
+export const IMG_PER_PAGE = 40;
 
-export default class PixabayApiService {
+export class PixabayApiService {
   constructor() {
     this.searchQuery = '';
     this.page = 1;

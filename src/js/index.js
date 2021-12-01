@@ -1,7 +1,10 @@
 import Notiflix from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
-import PixabayApiService from './http-services/pixabay-api-service.js';
+import {
+  IMG_PER_PAGE,
+  PixabayApiService,
+} from './http-services/pixabay-api-service.js';
 import createImgCards from './templates/gallery-card-template.js';
 import SearchBtn from './components/search-btn.js';
 
@@ -29,7 +32,6 @@ searchForm.addEventListener('submit', getImages);
 // delegates included button click to form
 searchBtn.refs.btn.addEventListener('click', () => searchForm.requestSubmit());
 loadMoreBtn.refs.btn.addEventListener('click', getMoreImages);
-// blur doesnt work
 searchForm.addEventListener('input', () => searchBtn.enableBtn());
 
 function getImages(e) {
@@ -42,28 +44,33 @@ function getImages(e) {
   pixabayApiService.resetPage();
   scrollToPageStart();
 
-  pixabayApiService.fetchImages().then(data => {
-    validateQueryStatus(data);
-    clearGallery();
-    addCardsMarkup(data);
+  pixabayApiService
+    .fetchImages()
+    .then(data => {
+      clearGallery();
+      addCardsMarkup(data);
 
-    searchBtn.disableLoadState();
-    searchBtn.disableBtn();
-    loadMoreBtn.showBtn();
-    loadMoreBtn.disableLoadState();
-    searchForm.elements.searchQuery.blur();
-  });
+      searchBtn.disableLoadState();
+      searchBtn.disableBtn();
+      loadMoreBtn.showBtn();
+      loadMoreBtn.disableLoadState();
+      searchForm.elements.searchQuery.blur();
+
+      validateQueryStatus(data);
+    })
+    .catch(error => validateQueryStatus(error));
 }
 
 function getMoreImages() {
   loadMoreBtn.enableLoadState();
 
   pixabayApiService.fetchImages().then(data => {
-    validateQueryStatus(data);
     addCardsMarkup(data);
     scrollToNewCards();
 
     loadMoreBtn.disableLoadState();
+
+    validateQueryStatus(data);
   });
 }
 
@@ -94,6 +101,7 @@ function scrollToNewCards() {
 }
 
 function validateQueryStatus(data) {
+  // re-do with async try-catch
   if (data.name === 'Error') {
     return notifySearchError(data);
   }
@@ -101,13 +109,19 @@ function validateQueryStatus(data) {
     loadMoreBtn.hideBtn();
     return notifySearchUnSuccess();
   }
-  if (data.hits.length !== 0 && gallery.childElementCount === 0) {
+  if (data.hits.length !== 0 && pixabayApiService.page === 2) {
     notifySearchSuccess(data);
   }
-  if (pixabayApiService.page > Math.ceil(data.totalHits / data.hits.length)) {
-    notifySearchEnd();
+  if (pixabayApiService.page > Math.ceil(data.totalHits / IMG_PER_PAGE)) {
     loadMoreBtn.hideBtn();
+    notifySearchEnd();
   }
+}
+
+function notifySearchError(error) {
+  Notiflix.Notify.failure(
+    `Error in running search. Please retry. Log: ${error}`,
+  );
 }
 
 function notifySearchUnSuccess() {
@@ -123,11 +137,5 @@ function notifySearchSuccess(data) {
 function notifySearchEnd() {
   Notiflix.Notify.info(
     "We're sorry, but you've reached the end of search results.",
-  );
-}
-
-function notifySearchError(error) {
-  Notiflix.Notify.failure(
-    `Error in running search. Please retry. If error repeat contact admin: ${error}`,
   );
 }
