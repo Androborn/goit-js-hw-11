@@ -1,0 +1,28 @@
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  grid-gap: 20px;
+  padding: 20px;
+
+  @media (min-width: 1440px) {
+    grid-template-columns: repeat(5, minmax(280px, 1fr));
+  }
+}
+
+body > .search-btn {
+  padding: 10px;
+  margin-bottom: 20px;
+
+  font-size: 20px;
+  border-radius: 5px;
+  background-color: #3f71b1;
+  color: #fff;
+  border: none;
+
+  transition: transform cubic-bezier(0.4, 0, 0.2, 1) 500ms;
+
+  &:hover,
+  :focus {
+    transform: scale(1.1);
+  }
+}

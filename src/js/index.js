@@ -43,6 +43,7 @@ function getImages(e) {
   scrollToPageStart();
 
   pixabayApiService.fetchImages().then(data => {
+    validateQueryStatus(data);
     clearGallery();
     addCardsMarkup(data);
 
@@ -50,8 +51,7 @@ function getImages(e) {
     searchBtn.disableBtn();
     loadMoreBtn.showBtn();
     loadMoreBtn.disableLoadState();
-
-    pushNotification(data);
+    searchForm.elements.searchQuery.blur();
   });
 }
 
@@ -59,12 +59,11 @@ function getMoreImages() {
   loadMoreBtn.enableLoadState();
 
   pixabayApiService.fetchImages().then(data => {
+    validateQueryStatus(data);
     addCardsMarkup(data);
     scrollToNewCards();
 
     loadMoreBtn.disableLoadState();
-
-    pushNotification(data);
   });
 }
 
@@ -94,7 +93,7 @@ function scrollToNewCards() {
   });
 }
 
-function pushNotification(data) {
+function validateQueryStatus(data) {
   if (data.name === 'Error') {
     return notifySearchError(data);
   }
@@ -102,7 +101,7 @@ function pushNotification(data) {
     loadMoreBtn.hideBtn();
     return notifySearchUnSuccess();
   }
-  if (data.hits.length !== 0) {
+  if (data.hits.length !== 0 && gallery.childElementCount === 0) {
     notifySearchSuccess(data);
   }
   if (pixabayApiService.page > Math.ceil(data.totalHits / data.hits.length)) {

@@ -32,6 +32,7 @@ export default class SearchBtn {
   disableBtn() {
     this.refs.btn.disabled = true;
     this.refs.btn.blur();
+    this.refs.btn.style.pointerEvents = 'none';
     // add event poiter none to search
   }
 
